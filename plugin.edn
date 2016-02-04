@@ -1,0 +1,6 @@
+{:name "autocompleter"
+ :version "0.1.0"
+ :author "Light Table"
+ :source "https://github.com/LightTable/autocompleter"
+ :desc "Autocompleter plugin for Light Table"
+ :behaviors "autocompleter.behaviors"}

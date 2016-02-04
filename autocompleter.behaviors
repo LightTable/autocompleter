@@ -1,0 +1,32 @@
+[
+  [:app :lt.objs.plugins/load-js ["codemirror/show-hint.js"
+                                  "codemirror/anyword-hint.js"
+                                  "codemirror/javascript-hint.js"
+                                  "autocompleter_compiled.js"]]
+  [:app :lt.objs.plugins/load-css "css/autocompleter.css"]
+
+
+  [:editor :-lt.plugins.auto-complete/intra-buffer-string-hints]
+  [:editor :-lt.plugins.auto-complete/textual-hints]
+  [:editor :-lt.plugins.auto-paren/close-pair]
+  [:editor :-lt.plugins.auto-complete/async-hint-tokens]
+  [:editor :-lt.plugins.auto-complete/show-hint]
+  [:editor :-lt.plugins.auto-complete/remove-on-move-line]
+  [:editor :-lt.plugins.auto-complete/remove-on-scroll-inactive]
+  [:editor :-lt.plugins.auto-complete/auto-show-on-input]
+
+
+  [:hinter :-lt.plugins.auto-complete/select]
+  [:hinter :-lt.plugins.auto-complete/escape!]
+  [:hinter :-lt.plugins.auto-complete/select-unknown]
+  [:hinter :-lt.plugins.auto-complete/line-change]
+  [:hinter :-lt.plugins.auto-complete/set-hint-limit]
+
+
+  [:editor.javascript :lt.plugins.autocompleter.core/anyword-hints]
+  [:editor.javascript :lt.plugins.autocompleter.core/javascript-hints]
+  [:editor.javascript :lt.plugins.autocompleter.core/start-hinting]
+  [:editor :lt.plugins.autocompleter.core/line-change]
+  [:editor :lt.plugins.autocompleter.core/auto-show-on-input]
+  [:editor :lt.plugins.autocompleter.core/show-hint-results]
+  ]
