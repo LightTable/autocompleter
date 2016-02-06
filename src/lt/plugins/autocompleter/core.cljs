@@ -51,6 +51,8 @@
          clj->js)))
 
 
+
+
 (defn- listen-for-hint-results
   "Listen for hint results from all given channels
   Will raise a behavior to show results when all channels have delivered a result
@@ -79,7 +81,7 @@
          from (pos-obj->pos (:from res)) ; DOH, statement above doesn't traverse into the from to js objects
          to (pos-obj->pos (:to res))]
      (map #(hash-map :text %
-                     :completion %
+                     :displayText %
                      :from from
                      :to to)
           (:list res)))
