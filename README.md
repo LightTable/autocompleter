@@ -128,6 +128,7 @@ to you plugin's behaviors (or the user of your plugin can add to their user beha
 The hinter requires the following format for results
 
 A list or vector with the following keys;
+
 | First Header  | Second Header |
 | ------------- | ------------- |
 | text  | This is the completion text  |
