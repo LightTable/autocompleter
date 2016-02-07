@@ -5,8 +5,9 @@
             [lt.objs.command :as cmd]
             [lt.object :as object]
             [lt.util.js :as jsutil]
+            [lt.util.dom :as dom]
             [cljs.core.async :as async :refer [<! put! chan timeout]])
-  (:require-macros [lt.macros :refer [behavior background defui]]
+  (:require-macros [lt.macros :refer [behavior]]
                     [cljs.core.async.macros :refer [go go-loop]]))
 
 
@@ -27,9 +28,9 @@
 (defn- distinct-completions [hints]
   (let [seen #js {}]
     (filter (fn [hint]
-              (if (true? (aget seen (:completion hint)))
+              (if (true? (aget seen (:text hint)))
                 false
-                (aset seen (:completion hint) true)))
+                (aset seen (:text hint) true)))
             hints)))
 
 ;; TODO:
@@ -41,7 +42,7 @@
   [hints]
   (when (seq hints)
     (->> hints
-         (filter #(< (.-length (:completion %)) 1000))
+         (filter #(< (.-length (:displayText %)) 1000))
          distinct-completions
          (sort-by :text)
          (take 25)
@@ -75,17 +76,22 @@
    :line (.-line p)})
 
 
+
 (defn- from-cm-hints [res-obj]
-  (if res-obj
+  (when res-obj
     (let [res (js->clj res-obj :keywordize-keys true)
-         from (pos-obj->pos (:from res)) ; DOH, statement above doesn't traverse into the from to js objects
-         to (pos-obj->pos (:to res))]
-     (map #(hash-map :text %
-                     :displayText %
-                     :from from
-                     :to to)
-          (:list res)))
-    []))
+          from (pos-obj->pos (:from res)) ; DOH, js->clj above doesn't traverse into the from to js objects
+          to (pos-obj->pos (:to res))
+          sym (editor/range (pool/last-active) from to)]
+      (when (seq (.trim sym))
+        (map #(hash-map :text %
+                       :displayText %
+                       :render (fn [el self data]
+                                 (dom/html el (js/wrapMatch (.-displayText data) #js {:matched sym})))
+                       :from from
+                       :to to)
+            (:list res))))))
+
 
 
 ;; TODO: This needs to be configurable per hint provider
@@ -104,30 +110,37 @@
     (.close state)))
 
 
+
+(defn- cm-hinter [ed channels hinter-fn]
+  (if (should-hint? ed)
+    (let [ch (chan)
+          hints (-> (hinter-fn (editor/->cm-ed ed))
+                    from-cm-hints)]
+      (if (seq hints)
+        (do
+          (put! ch hints)
+          (conj channels ch))
+        channels))
+    channels))
+
+
 (behavior ::javascript-hints
           :triggers #{:init-hints}
           :desc "Autocompleter: JavaScript Hints"
           :reaction (fn [ed channels]
-                      (if (should-hint? ed)
-                        (let [ch (chan)]
-                         (put! ch (-> (.javascript js/CodeMirror.hint (editor/->cm-ed ed))
-                                      from-cm-hints))
-                         (conj channels ch))
-                        channels)))
+                      (cm-hinter ed
+                                 channels
+                                 (fn [cm-ed]
+                                   (.javascript js/CodeMirror.hint cm-ed)))))
 
 (behavior ::anyword-hints
           :triggers #{:init-hints}
           :desc "Autocompleter: Anyword Hints"
           :reaction (fn [ed channels]
-                      (if (should-hint? ed)
-                        (let [ch (chan)]
-                         (put! ch (-> (.anyword js/CodeMirror.hint (editor/->cm-ed ed))
-                                      from-cm-hints))
-                         (conj channels ch))
-                        channels)))
-
-
-
+                      (cm-hinter ed
+                                 channels
+                                 (fn [cm-ed]
+                                   (.anyword js/CodeMirror.hint cm-ed)))))
 
 (behavior ::show-hint-results
           :triggers #{:show-hint-results}
@@ -146,6 +159,7 @@
       (when (= "+delete" (.-origin ch)) ;; TODO: should probably handle paste and other things to
         (object/raise ed :start-hinting)))))
 
+
 (behavior ::start-hinting
           :triggers #{:start-hinting}
           :desc "Autocompleter: Start hinting"
@@ -155,9 +169,11 @@
                             chs (object/raise-reduce ed :init-hints [])]
                         (js/CodeMirror.off line-handle "change" on-line-change)
                         ;; YODO: Be nice to check if a proper channel was returned
-                        (when (seq chs)
-                          (listen-for-hint-results ed chs)
-                          (js/CodeMirror.on line-handle "change" on-line-change)))))
+                        (if (seq chs)
+                          (do
+                            (listen-for-hint-results ed chs)
+                            (js/CodeMirror.on line-handle "change" on-line-change))
+                          (maybe-close-hinter ed)))))
 
 
 (behavior ::auto-show-on-input
