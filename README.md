@@ -129,13 +129,13 @@ The hinter requires the following format for results
 
 A list or vector with the following keys;
 
-| First Header  | Second Header |
+| Key  | Description |
 | ------------- | ------------- |
-| text  | This is the completion text  |
-| displayText  | The text that is displayed in the hinter popup |
-| from   | {:ch x :line y} The start position of the user entered token the hint will replace if selected  |
-| to   | {:ch x :line y} The end position of the user entered token the hint will replace if selected  |
-| render  | Optional custom render function if you wish to customize how each item is rendered  |
+| :text  | This is the completion text  |
+| :displayText  | The text that is displayed in the hinter popup |
+| :from   | {:ch x :line y} The start position of the user entered token the hint will replace if selected  |
+| :to   | {:ch x :line y} The end position of the user entered token the hint will replace if selected  |
+| :render  | Optional custom render function if you wish to customize how each item is rendered  |
 
 #### Render function
 The render function has 3 parameters
