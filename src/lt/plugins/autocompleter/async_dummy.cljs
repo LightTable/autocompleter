@@ -11,11 +11,46 @@
   (:require-macros [lt.macros :refer [behavior background ]]))
 
 
+;; We should probably provide an api for channel storage (and cleanup) management
+;; Put it here for now to illustrate a (simple) possible solution
+
+;; TODO: not exactly uid quality...
+(defn- chan-id [ch]
+  (+ (ac/curr-time) (hash ch)))
+
+(defn- store-ch [ed ch]
+  (let [chs (or (:async-dummy-channels @ed) {})
+        ch-id (chan-id ch)]
+    (object/assoc-in! ed
+                      [:async-dummy-channels]
+                      (assoc chs ch-id ch))
+    ch-id))
+
+(defn- get-ch [ed ch-id]
+  (get-in @ed [:async-dummy-channels ch-id]))
+
+(defn- remove-ch [ed ch-id]
+  (let [chs (or (:async-dummy-channels @ed) {})]
+    (object/assoc-in! ed
+                      [:async-dummy-channels]
+                      (dissoc chs ch-id ))))
+
+;; (let [ed (pool/last-active)]
+;;   ;(object/assoc-in! ed [:async-dummy-channels] nil)
+;;   (println (:async-dummy-channels @ed)))
+
+
+
+;; (let [ed (atom {})
+;;       ch (chan)]
+;;   (let [ch-id (store-ch ed ch)]
+;;     (.log js/console (get-ch ed ch-id))))
+
 
 
 (def background-worker
   (background
-    (fn [obj-id token]
+    (fn [obj-id token ch-id]
       (js/setTimeout
         (fn []
           (let [all-hints ["map" "map-indexed" "map-reduce" "max" "min"]
@@ -24,15 +59,16 @@
             (js/_send obj-id
                       :async-hint-results
                       (clj->js {:sym sym
+                                :chid ch-id
                                 :list (filter #(starts-with % sym) all-hints)
                                 :from {:ch (:start token) :line (:line token)}
                                 :to {:ch (:end token) :line (:line token)}}))))
-        (+ 100 (rand-int 500)) ;; This provokes an interesting edge case where results may come out of order !
+        (+ 100 (rand-int 1)) ;; This provokes an interesting edge case where results may come out of order (try larger rand to see)!
         ))))
 
 
 
-(defn- ->hints [res-obj]
+(defn- ->hints [ed res-obj]
   (let [{:keys [sym from to] :as res} (js->clj res-obj :keywordize-keys true)]
     (map #(hash-map :text %
                     :displayText %
@@ -47,8 +83,10 @@
           :triggers #{:async-hint-results}
           :desc "Async dummy: Hint results"
           :reaction (fn [ed res]
-                      (when-let [ch (:async-dummy-channel @ed)]
-                        (put! ch (->hints res)))))
+                      (when-let [ch (get-ch ed (.-chid res))]
+                        (put! ch (->hints ed res))
+                        (remove-ch ed (.-chid res)) ;; TODO: if there are no results, no cleanup happens !
+                        )))
 
 
 (behavior ::async-hints
@@ -59,9 +97,7 @@
                             token (assoc (ac/get-token ed) :line (:line pos))
                             ch (chan)]
                         (if (ac/should-hint? ed)
-                          (do
-                            (object/assoc-in! ed [:async-dummy-channel] ch)
-                            (background-worker ed token)
+                          (let [ch-id (store-ch ed ch)]
+                            (background-worker ed token ch-id (ac/curr-time))
                             (conj channels ch))
                           channels))))
-
