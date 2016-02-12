@@ -11,9 +11,17 @@
                     [cljs.core.async.macros :refer [go go-loop]]))
 
 
+(defn- curr-time []
+  (.getTime (js/Date.)))
+
+(defn- elapsed [start]
+  (str (- (curr-time) start) " ms"))
+
+
+
 ;; TODO: Needs to be configurable (keymap and preferences for completeSingle etc)
 (def default-options
-  {:async true
+  {:async false
    :completeSingle false
    :supportsSelection true
    :closeOnUnfocus true
@@ -32,6 +40,8 @@
                 false
                 (aset seen (:text hint) true)))
             hints)))
+
+
 
 ;; TODO:
 ;; - Configurable sorting
@@ -53,7 +63,6 @@
 
 
 
-
 (defn- listen-for-hint-results
   "Listen for hint results from all given channels
   Will raise a behavior to show results when all channels have delivered a result
@@ -62,12 +71,14 @@
   (let [t (timeout 1000)] ;; should be configurable ?
     (go-loop [all-results []
               chs (conj channels t)]
-      (if (= 1 (count chs))
-        (object/raise ed :show-hint-results all-results)
-        (let [[res source] (async/alts! chs)]
-          (if (identical? source t)
-            (object/raise ed :show-hint-results all-results)
-            (recur (into all-results res) (remove #{source} chs))))))))
+             (if (= 1 (count chs))
+               (object/raise ed :show-hint-results all-results)
+               (let [[res source] (async/alts! chs)]
+                 (if (identical? source t)
+                   (do
+                     (println "WARNING: Timeout waiting from channel results")
+                     (object/raise ed :show-hint-results all-results))
+                   (recur (into all-results res) (remove #{source} chs))))))))
 
 
 
@@ -111,6 +122,8 @@
 
 
 
+
+
 (defn- cm-hinter [ed channels hinter-fn]
   (if (should-hint? ed)
     (let [ch (chan)
@@ -142,6 +155,8 @@
                                  (fn [cm-ed]
                                    (.anyword js/CodeMirror.hint cm-ed)))))
 
+
+
 (behavior ::show-hint-results
           :triggers #{:show-hint-results}
           :desc "Autocompleter: Show the autocompleter popup with the given hints"
@@ -149,8 +164,10 @@
                       (maybe-close-hinter ed)
                       (when-let [processed-hints (process-hint-results hints)]
                         (js/CodeMirror.showHint (editor/->cm-ed ed)
-                                                (fn [_ cb] (cb processed-hints))
+                                                (fn [] processed-hints)
                                                 (clj->js default-options)))))
+
+
 
 (defn- on-line-change [line ch]
   (let [ed (pool/last-active)]
@@ -158,6 +175,7 @@
       (js/CodeMirror.off line "change" on-line-change)
       (when (= "+delete" (.-origin ch)) ;; TODO: should probably handle paste and other things to
         (object/raise ed :start-hinting)))))
+
 
 
 (behavior ::start-hinting
@@ -176,9 +194,9 @@
                           (maybe-close-hinter ed)))))
 
 
+
 (behavior ::auto-show-on-input
           :triggers #{:input}
           :desc "Autocompleter: Show on change"
           :reaction (fn [ed _ ch]
                       (object/raise ed :start-hinting)))
-

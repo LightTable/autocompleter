@@ -33,7 +33,9 @@
 
 
   ;; anywords really don't play too well with more specific hint providers
-  [:editor.cljs :-lt.plugins.autocompleter.core/anyword-hints]
+  ;; try something like "map-" in a cljs editor and it becomes evident !
+  ;[:editor.cljs :-lt.plugins.autocompleter.core/anyword-hints]
+
   [:editor.cljs :lt.plugins.autocompleter.async-dummy/async-hint-results]
   [:editor.cljs :lt.plugins.autocompleter.async-dummy/async-hints]
 
