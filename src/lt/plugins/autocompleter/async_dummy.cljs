@@ -63,20 +63,26 @@
                                 :list (filter #(starts-with % sym) all-hints)
                                 :from {:ch (:start token) :line (:line token)}
                                 :to {:ch (:end token) :line (:line token)}}))))
-        (+ 100 (rand-int 1)) ;; This provokes an interesting edge case where results may come out of order (try larger rand to see)!
+        (+ 200 (rand-int 1)) ;; This provokes an interesting edge case where results may come out of order (try larger rand to see)!
         ))))
 
 
 
+
+
 (defn- ->hints [ed res-obj]
-  (let [{:keys [sym from to] :as res} (js->clj res-obj :keywordize-keys true)]
-    (map #(hash-map :text %
-                    :displayText %
-                    :render (fn [el self data]
-                              (dom/html el (js/wrapMatch (.-displayText data) #js {:matched sym})))
-                    :from from
-                    :to to)
-            (:list res))))
+  (let [{:keys [sym from to] :as res} (js->clj res-obj :keywordize-keys true)
+        token (ac/get-token ed)]
+
+    (if (< (- (:end token) (:ch to)) 2)
+      (map #(hash-map :text %
+                     :displayText %
+                     :render (fn [el self data]
+                               (dom/html el (js/wrapMatch (.-displayText data) #js {:matched sym})))
+                     :from from
+                     :to to)
+          (:list res))
+      [])))
 
 
 (behavior ::async-hint-results
