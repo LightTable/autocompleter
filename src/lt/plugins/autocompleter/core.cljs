@@ -23,14 +23,17 @@
 
 ;; TODO: Needs to be configurable (keymap and preferences for completeSingle etc)
 (def default-options
-  {:async false
+  {:async true
    :completeSingle false
    :supportsSelection true
    :closeOnUnfocus true
    :customKeys {:Up #((.-moveFocus %2) -1 )
                 :Down #((.-moveFocus %2) 1)
                 :Enter #((.-pick %2))
-                :Tab #((.-pick %2))
+                :Tab (fn [a b]
+                       ;(.log js/console a)
+                       ;(.log js/console b)
+                       ((.-pick b))) ;;#((.-pick %2))
                 :Esc #((.-close %2 ))}})
 
 
@@ -42,7 +45,6 @@
                 false
                 (aset seen (:text hint) true)))
             hints)))
-
 
 
 ;; TODO:
@@ -69,17 +71,17 @@
   "Listen for hint results from all given channels
   Will raise a behavior to show results when all channels have delivered a result
   or alternatively the specified timeout has elapsed"
-  [ed channels]
-  (let [t (timeout 1000)] ;; should be configurable ?
+  [ed channels hinter-ch]
+  (let [t (timeout 500)] ;; should be configurable ?
     (go-loop [all-results []
               chs (conj channels t)]
              (if (= 1 (count chs))
-               (object/raise ed :show-hint-results all-results)
+               (put! hinter-ch all-results)
                (let [[res source] (async/alts! chs)]
                  (if (identical? source t)
                    (do
-                     (println "WARNING: Timeout waiting from channel results")
-                     (object/raise ed :show-hint-results all-results))
+                     (println "WARNING: Timeout waiting for hinter provider channel results")
+                     (put! hinter-ch all-results))
                    (recur (into all-results res) (remove #{source} chs))))))))
 
 
@@ -125,7 +127,6 @@
 
 
 
-
 (defn- cm-hinter [ed channels hinter-fn]
   (if (should-hint? ed)
     (let [ch (chan)
@@ -159,24 +160,27 @@
 
 
 
-(behavior ::show-hint-results
-          :triggers #{:show-hint-results}
-          :desc "Autocompleter: Show the autocompleter popup with the given hints"
-          :reaction (fn [ed hints]
-                      (maybe-close-hinter ed)
-                      (when-let [processed-hints (process-hint-results hints)]
-                        (js/CodeMirror.showHint (editor/->cm-ed ed)
-                                                (fn [] processed-hints)
-                                                (clj->js default-options)))))
-
-
-
 (defn- on-line-change [line ch]
   (let [ed (pool/last-active)]
     (if-not (completion-active? ed)
       (js/CodeMirror.off line "change" on-line-change)
       (when (= "+delete" (.-origin ch)) ;; TODO: should probably handle paste and other things to
         (object/raise ed :start-hinting)))))
+
+
+(defn- init-show-hint-ch
+  "Creates a channel for writing results that are to be popped up with the hinter ui
+   Displays hint results async by calling the showHint plugin callback when
+   results are received on the channel"
+  [ed]
+  (let [ch (chan)]
+    (js/CodeMirror.showHint (editor/->cm-ed ed)
+                            (fn [_ cb]
+                              (go
+                                (let [hints (<! ch)]
+                                  (cb (process-hint-results hints)))))
+                            (clj->js default-options))
+    ch))
 
 
 
@@ -187,13 +191,14 @@
                       (let [pos (editor/->cursor ed)
                             line-handle (editor/line-handle ed (:line pos))
                             chs (object/raise-reduce ed :init-hints [])]
-                        (js/CodeMirror.off line-handle "change" on-line-change)
-                        ;; YODO: Be nice to check if a proper channel was returned
-                        (if (seq chs)
-                          (do
-                            (listen-for-hint-results ed chs)
-                            (js/CodeMirror.on line-handle "change" on-line-change))
-                          (maybe-close-hinter ed)))))
+                         (js/CodeMirror.off line-handle "change" on-line-change)
+                         ;; YODO: Be nice to check if a proper channel was returned
+                         (if (seq chs)
+                           (do
+                             (listen-for-hint-results ed chs (init-show-hint-ch ed))
+                             (js/CodeMirror.on line-handle "change" on-line-change)
+                             )
+                           (maybe-close-hinter ed)))))
 
 
 
@@ -202,3 +207,5 @@
           :desc "Autocompleter: Show on change"
           :reaction (fn [ed _ ch]
                       (object/raise ed :start-hinting)))
+
+

@@ -5928,11 +5928,11 @@ lt.plugins.autocompleter.core.curr_time = (function curr_time(){return (new Date
 });
 lt.plugins.autocompleter.core.elapsed = (function elapsed(start){return [cljs.core.str((lt.plugins.autocompleter.core.curr_time.call(null) - start)),cljs.core.str(" ms")].join('');
 });
-lt.plugins.autocompleter.core.default_options = new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null,"async","async",1107031534),false,new cljs.core.Keyword(null,"completeSingle","completeSingle",2100037203),false,new cljs.core.Keyword(null,"supportsSelection","supportsSelection",3475218138),true,new cljs.core.Keyword(null,"closeOnUnfocus","closeOnUnfocus",2215570266),true,new cljs.core.Keyword(null,"customKeys","customKeys",3726901367),new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null,"Up","Up",1013906989),(function (p1__13142_SHARP_,p2__13141_SHARP_){return p2__13141_SHARP_.moveFocus.call(null,-1);
-}),new cljs.core.Keyword(null,"Down","Down",1016040500),(function (p1__13144_SHARP_,p2__13143_SHARP_){return p2__13143_SHARP_.moveFocus.call(null,1);
-}),new cljs.core.Keyword(null,"Enter","Enter",1081018922),(function (p1__13146_SHARP_,p2__13145_SHARP_){return p2__13145_SHARP_.pick.call(null);
-}),new cljs.core.Keyword(null,"Tab","Tab",1013988071),(function (p1__13148_SHARP_,p2__13147_SHARP_){return p2__13147_SHARP_.pick.call(null);
-}),new cljs.core.Keyword(null,"Esc","Esc",1013974215),(function (p1__13150_SHARP_,p2__13149_SHARP_){return p2__13149_SHARP_.close.call(null);
+lt.plugins.autocompleter.core.default_options = new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null,"async","async",1107031534),true,new cljs.core.Keyword(null,"completeSingle","completeSingle",2100037203),false,new cljs.core.Keyword(null,"supportsSelection","supportsSelection",3475218138),true,new cljs.core.Keyword(null,"closeOnUnfocus","closeOnUnfocus",2215570266),true,new cljs.core.Keyword(null,"customKeys","customKeys",3726901367),new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null,"Up","Up",1013906989),(function (p1__17058_SHARP_,p2__17057_SHARP_){return p2__17057_SHARP_.moveFocus.call(null,-1);
+}),new cljs.core.Keyword(null,"Down","Down",1016040500),(function (p1__17060_SHARP_,p2__17059_SHARP_){return p2__17059_SHARP_.moveFocus.call(null,1);
+}),new cljs.core.Keyword(null,"Enter","Enter",1081018922),(function (p1__17062_SHARP_,p2__17061_SHARP_){return p2__17061_SHARP_.pick.call(null);
+}),new cljs.core.Keyword(null,"Tab","Tab",1013988071),(function (a,b){return b.pick.call(null);
+}),new cljs.core.Keyword(null,"Esc","Esc",1013974215),(function (p1__17064_SHARP_,p2__17063_SHARP_){return p2__17063_SHARP_.close.call(null);
 })], null)], null);
 lt.plugins.autocompleter.core.distinct_completions = (function distinct_completions(hints){var seen = {};return cljs.core.filter.call(null,((function (seen){
 return (function (hint){if((seen[new cljs.core.Keyword(null,"text","text",1017460895).cljs$core$IFn$_invoke$arity$1(hint)]) === true)
@@ -5947,8 +5947,8 @@ return (function (hint){if((seen[new cljs.core.Keyword(null,"text","text",101746
 * Prepare found hints for display through CM showHint
 */
 lt.plugins.autocompleter.core.process_hint_results = (function process_hint_results(hints){if(cljs.core.seq.call(null,hints))
-{return cljs.core.clj__GT_js.call(null,(function (p1__13152_SHARP_){var fst = cljs.core.first.call(null,new cljs.core.Keyword(null,"list","list",1017226256).cljs$core$IFn$_invoke$arity$1(p1__13152_SHARP_));return cljs.core.assoc.call(null,p1__13152_SHARP_,new cljs.core.Keyword(null,"from","from",1017056028),new cljs.core.Keyword(null,"from","from",1017056028).cljs$core$IFn$_invoke$arity$1(fst),new cljs.core.Keyword(null,"to","to",1013907949),new cljs.core.Keyword(null,"to","to",1013907949).cljs$core$IFn$_invoke$arity$1(fst));
-}).call(null,cljs.core.PersistentHashMap.fromArrays.call(null,[new cljs.core.Keyword(null,"list","list",1017226256)],[cljs.core.take.call(null,25,cljs.core.sort_by.call(null,new cljs.core.Keyword(null,"text","text",1017460895),lt.plugins.autocompleter.core.distinct_completions.call(null,cljs.core.filter.call(null,(function (p1__13151_SHARP_){return (new cljs.core.Keyword(null,"displayText","displayText",2728236161).cljs$core$IFn$_invoke$arity$1(p1__13151_SHARP_).length < 1000);
+{return cljs.core.clj__GT_js.call(null,(function (p1__17066_SHARP_){var fst = cljs.core.first.call(null,new cljs.core.Keyword(null,"list","list",1017226256).cljs$core$IFn$_invoke$arity$1(p1__17066_SHARP_));return cljs.core.assoc.call(null,p1__17066_SHARP_,new cljs.core.Keyword(null,"from","from",1017056028),new cljs.core.Keyword(null,"from","from",1017056028).cljs$core$IFn$_invoke$arity$1(fst),new cljs.core.Keyword(null,"to","to",1013907949),new cljs.core.Keyword(null,"to","to",1013907949).cljs$core$IFn$_invoke$arity$1(fst));
+}).call(null,cljs.core.PersistentHashMap.fromArrays.call(null,[new cljs.core.Keyword(null,"list","list",1017226256)],[cljs.core.take.call(null,25,cljs.core.sort_by.call(null,new cljs.core.Keyword(null,"text","text",1017460895),lt.plugins.autocompleter.core.distinct_completions.call(null,cljs.core.filter.call(null,(function (p1__17065_SHARP_){return (new cljs.core.Keyword(null,"displayText","displayText",2728236161).cljs$core$IFn$_invoke$arity$1(p1__17065_SHARP_).length < 1000);
 }),hints))))])));
 } else
 {return null;
@@ -5959,69 +5959,69 @@ lt.plugins.autocompleter.core.process_hint_results = (function process_hint_resu
 * Will raise a behavior to show results when all channels have delivered a result
 * or alternatively the specified timeout has elapsed
 */
-lt.plugins.autocompleter.core.listen_for_hint_results = (function listen_for_hint_results(ed,channels){var t = cljs.core.async.timeout.call(null,1000);var c__7537__auto__ = cljs.core.async.chan.call(null,1);cljs.core.async.impl.dispatch.run.call(null,((function (c__7537__auto__,t){
+lt.plugins.autocompleter.core.listen_for_hint_results = (function listen_for_hint_results(ed,channels,hinter_ch){var t = cljs.core.async.timeout.call(null,500);var c__7537__auto__ = cljs.core.async.chan.call(null,1);cljs.core.async.impl.dispatch.run.call(null,((function (c__7537__auto__,t){
 return (function (){var f__7538__auto__ = (function (){var switch__7467__auto__ = ((function (c__7537__auto__,t){
-return (function (state_13238){var state_val_13239 = (state_13238[1]);if((state_val_13239 === 1))
-{var inst_13207 = cljs.core.conj.call(null,channels,t);var inst_13208 = cljs.core.PersistentVector.EMPTY;var inst_13209 = inst_13207;var state_13238__$1 = (function (){var statearr_13240 = state_13238;(statearr_13240[7] = inst_13209);
-(statearr_13240[8] = inst_13208);
-return statearr_13240;
-})();var statearr_13241_13262 = state_13238__$1;(statearr_13241_13262[2] = null);
-(statearr_13241_13262[1] = 2);
+return (function (state_17152){var state_val_17153 = (state_17152[1]);if((state_val_17153 === 1))
+{var inst_17121 = cljs.core.conj.call(null,channels,t);var inst_17122 = cljs.core.PersistentVector.EMPTY;var inst_17123 = inst_17121;var state_17152__$1 = (function (){var statearr_17154 = state_17152;(statearr_17154[7] = inst_17123);
+(statearr_17154[8] = inst_17122);
+return statearr_17154;
+})();var statearr_17155_17204 = state_17152__$1;(statearr_17155_17204[2] = null);
+(statearr_17155_17204[1] = 2);
 return new cljs.core.Keyword(null,"recur","recur",1122293407);
 } else
-{if((state_val_13239 === 2))
-{var inst_13209 = (state_13238[7]);var inst_13211 = cljs.core.count.call(null,inst_13209);var inst_13212 = cljs.core._EQ_.call(null,1,inst_13211);var state_13238__$1 = state_13238;if(inst_13212)
-{var statearr_13242_13263 = state_13238__$1;(statearr_13242_13263[1] = 4);
+{if((state_val_17153 === 2))
+{var inst_17123 = (state_17152[7]);var inst_17125 = cljs.core.count.call(null,inst_17123);var inst_17126 = cljs.core._EQ_.call(null,1,inst_17125);var state_17152__$1 = state_17152;if(inst_17126)
+{var statearr_17156_17205 = state_17152__$1;(statearr_17156_17205[1] = 4);
 } else
-{var statearr_13243_13264 = state_13238__$1;(statearr_13243_13264[1] = 5);
+{var statearr_17157_17206 = state_17152__$1;(statearr_17157_17206[1] = 5);
 }
 return new cljs.core.Keyword(null,"recur","recur",1122293407);
 } else
-{if((state_val_13239 === 3))
-{var inst_13236 = (state_13238[2]);var state_13238__$1 = state_13238;return cljs.core.async.impl.ioc_helpers.return_chan.call(null,state_13238__$1,inst_13236);
+{if((state_val_17153 === 3))
+{var inst_17150 = (state_17152[2]);var state_17152__$1 = state_17152;return cljs.core.async.impl.ioc_helpers.return_chan.call(null,state_17152__$1,inst_17150);
 } else
-{if((state_val_13239 === 4))
-{var inst_13208 = (state_13238[8]);var inst_13214 = lt.object.raise.call(null,ed,new cljs.core.Keyword(null,"show-hint-results","show-hint-results",3654108914),inst_13208);var state_13238__$1 = state_13238;var statearr_13244_13265 = state_13238__$1;(statearr_13244_13265[2] = inst_13214);
-(statearr_13244_13265[1] = 6);
+{if((state_val_17153 === 4))
+{var inst_17122 = (state_17152[8]);var inst_17128 = cljs.core.async.put_BANG_.call(null,hinter_ch,inst_17122);var state_17152__$1 = state_17152;var statearr_17158_17207 = state_17152__$1;(statearr_17158_17207[2] = inst_17128);
+(statearr_17158_17207[1] = 6);
 return new cljs.core.Keyword(null,"recur","recur",1122293407);
 } else
-{if((state_val_13239 === 5))
-{var inst_13209 = (state_13238[7]);var state_13238__$1 = state_13238;return cljs.core.async.impl.ioc_helpers.ioc_alts_BANG_.call(null,state_13238__$1,7,inst_13209);
+{if((state_val_17153 === 5))
+{var inst_17123 = (state_17152[7]);var state_17152__$1 = state_17152;return cljs.core.async.impl.ioc_helpers.ioc_alts_BANG_.call(null,state_17152__$1,7,inst_17123);
 } else
-{if((state_val_13239 === 6))
-{var inst_13234 = (state_13238[2]);var state_13238__$1 = state_13238;var statearr_13245_13266 = state_13238__$1;(statearr_13245_13266[2] = inst_13234);
-(statearr_13245_13266[1] = 3);
+{if((state_val_17153 === 6))
+{var inst_17148 = (state_17152[2]);var state_17152__$1 = state_17152;var statearr_17159_17208 = state_17152__$1;(statearr_17159_17208[2] = inst_17148);
+(statearr_17159_17208[1] = 3);
 return new cljs.core.Keyword(null,"recur","recur",1122293407);
 } else
-{if((state_val_13239 === 7))
-{var inst_13220 = (state_13238[9]);var inst_13218 = (state_13238[2]);var inst_13219 = cljs.core.nth.call(null,inst_13218,0,null);var inst_13220__$1 = cljs.core.nth.call(null,inst_13218,1,null);var inst_13221 = (inst_13220__$1 === t);var state_13238__$1 = (function (){var statearr_13246 = state_13238;(statearr_13246[10] = inst_13219);
-(statearr_13246[9] = inst_13220__$1);
-return statearr_13246;
-})();if(cljs.core.truth_(inst_13221))
-{var statearr_13247_13267 = state_13238__$1;(statearr_13247_13267[1] = 8);
+{if((state_val_17153 === 7))
+{var inst_17134 = (state_17152[9]);var inst_17132 = (state_17152[2]);var inst_17133 = cljs.core.nth.call(null,inst_17132,0,null);var inst_17134__$1 = cljs.core.nth.call(null,inst_17132,1,null);var inst_17135 = (inst_17134__$1 === t);var state_17152__$1 = (function (){var statearr_17160 = state_17152;(statearr_17160[9] = inst_17134__$1);
+(statearr_17160[10] = inst_17133);
+return statearr_17160;
+})();if(cljs.core.truth_(inst_17135))
+{var statearr_17161_17209 = state_17152__$1;(statearr_17161_17209[1] = 8);
 } else
-{var statearr_13248_13268 = state_13238__$1;(statearr_13248_13268[1] = 9);
+{var statearr_17162_17210 = state_17152__$1;(statearr_17162_17210[1] = 9);
 }
 return new cljs.core.Keyword(null,"recur","recur",1122293407);
 } else
-{if((state_val_13239 === 8))
-{var inst_13208 = (state_13238[8]);var inst_13223 = cljs.core.println.call(null,"WARNING: Timeout waiting from channel results");var inst_13224 = lt.object.raise.call(null,ed,new cljs.core.Keyword(null,"show-hint-results","show-hint-results",3654108914),inst_13208);var state_13238__$1 = (function (){var statearr_13249 = state_13238;(statearr_13249[11] = inst_13223);
-return statearr_13249;
-})();var statearr_13250_13269 = state_13238__$1;(statearr_13250_13269[2] = inst_13224);
-(statearr_13250_13269[1] = 10);
+{if((state_val_17153 === 8))
+{var inst_17122 = (state_17152[8]);var inst_17137 = cljs.core.println.call(null,"WARNING: Timeout waiting for hinter provider channel results");var inst_17138 = cljs.core.async.put_BANG_.call(null,hinter_ch,inst_17122);var state_17152__$1 = (function (){var statearr_17163 = state_17152;(statearr_17163[11] = inst_17137);
+return statearr_17163;
+})();var statearr_17164_17211 = state_17152__$1;(statearr_17164_17211[2] = inst_17138);
+(statearr_17164_17211[1] = 10);
 return new cljs.core.Keyword(null,"recur","recur",1122293407);
 } else
-{if((state_val_13239 === 9))
-{var inst_13209 = (state_13238[7]);var inst_13219 = (state_13238[10]);var inst_13220 = (state_13238[9]);var inst_13208 = (state_13238[8]);var inst_13226 = cljs.core.into.call(null,inst_13208,inst_13219);var inst_13227 = [inst_13220];var inst_13228 = cljs.core.PersistentHashSet.fromArray.call(null,inst_13227,true);var inst_13229 = cljs.core.remove.call(null,inst_13228,inst_13209);var inst_13208__$1 = inst_13226;var inst_13209__$1 = inst_13229;var state_13238__$1 = (function (){var statearr_13251 = state_13238;(statearr_13251[7] = inst_13209__$1);
-(statearr_13251[8] = inst_13208__$1);
-return statearr_13251;
-})();var statearr_13252_13270 = state_13238__$1;(statearr_13252_13270[2] = null);
-(statearr_13252_13270[1] = 2);
+{if((state_val_17153 === 9))
+{var inst_17123 = (state_17152[7]);var inst_17122 = (state_17152[8]);var inst_17134 = (state_17152[9]);var inst_17133 = (state_17152[10]);var inst_17140 = cljs.core.into.call(null,inst_17122,inst_17133);var inst_17141 = [inst_17134];var inst_17142 = cljs.core.PersistentHashSet.fromArray.call(null,inst_17141,true);var inst_17143 = cljs.core.remove.call(null,inst_17142,inst_17123);var inst_17122__$1 = inst_17140;var inst_17123__$1 = inst_17143;var state_17152__$1 = (function (){var statearr_17165 = state_17152;(statearr_17165[7] = inst_17123__$1);
+(statearr_17165[8] = inst_17122__$1);
+return statearr_17165;
+})();var statearr_17166_17212 = state_17152__$1;(statearr_17166_17212[2] = null);
+(statearr_17166_17212[1] = 2);
 return new cljs.core.Keyword(null,"recur","recur",1122293407);
 } else
-{if((state_val_13239 === 10))
-{var inst_13232 = (state_13238[2]);var state_13238__$1 = state_13238;var statearr_13253_13271 = state_13238__$1;(statearr_13253_13271[2] = inst_13232);
-(statearr_13253_13271[1] = 6);
+{if((state_val_17153 === 10))
+{var inst_17146 = (state_17152[2]);var state_17152__$1 = state_17152;var statearr_17167_17213 = state_17152__$1;(statearr_17167_17213[2] = inst_17146);
+(statearr_17167_17213[1] = 6);
 return new cljs.core.Keyword(null,"recur","recur",1122293407);
 } else
 {return null;
@@ -6039,13 +6039,13 @@ return new cljs.core.Keyword(null,"recur","recur",1122293407);
 ;return ((function (switch__7467__auto__,c__7537__auto__,t){
 return (function() {
 var state_machine__7468__auto__ = null;
-var state_machine__7468__auto____0 = (function (){var statearr_13257 = [null,null,null,null,null,null,null,null,null,null,null,null];(statearr_13257[0] = state_machine__7468__auto__);
-(statearr_13257[1] = 1);
-return statearr_13257;
+var state_machine__7468__auto____0 = (function (){var statearr_17171 = [null,null,null,null,null,null,null,null,null,null,null,null];(statearr_17171[0] = state_machine__7468__auto__);
+(statearr_17171[1] = 1);
+return statearr_17171;
 });
-var state_machine__7468__auto____1 = (function (state_13238){while(true){
+var state_machine__7468__auto____1 = (function (state_17152){while(true){
 var ret_value__7469__auto__ = (function (){try{while(true){
-var result__7470__auto__ = switch__7467__auto__.call(null,state_13238);if(cljs.core.keyword_identical_QMARK_.call(null,result__7470__auto__,new cljs.core.Keyword(null,"recur","recur",1122293407)))
+var result__7470__auto__ = switch__7467__auto__.call(null,state_17152);if(cljs.core.keyword_identical_QMARK_.call(null,result__7470__auto__,new cljs.core.Keyword(null,"recur","recur",1122293407)))
 {{
 continue;
 }
@@ -6054,21 +6054,21 @@ continue;
 }
 break;
 }
-}catch (e13258){if((e13258 instanceof Object))
-{var ex__7471__auto__ = e13258;var statearr_13259_13272 = state_13238;(statearr_13259_13272[5] = ex__7471__auto__);
-cljs.core.async.impl.ioc_helpers.process_exception.call(null,state_13238);
+}catch (e17172){if((e17172 instanceof Object))
+{var ex__7471__auto__ = e17172;var statearr_17173_17214 = state_17152;(statearr_17173_17214[5] = ex__7471__auto__);
+cljs.core.async.impl.ioc_helpers.process_exception.call(null,state_17152);
 return new cljs.core.Keyword(null,"recur","recur",1122293407);
 } else
 {if(new cljs.core.Keyword(null,"else","else",1017020587))
-{throw e13258;
+{throw e17172;
 } else
 {return null;
 }
 }
 }})();if(cljs.core.keyword_identical_QMARK_.call(null,ret_value__7469__auto__,new cljs.core.Keyword(null,"recur","recur",1122293407)))
 {{
-var G__13273 = state_13238;
-state_13238 = G__13273;
+var G__17215 = state_17152;
+state_17152 = G__17215;
 continue;
 }
 } else
@@ -6077,12 +6077,12 @@ continue;
 break;
 }
 });
-state_machine__7468__auto__ = function(state_13238){
+state_machine__7468__auto__ = function(state_17152){
 switch(arguments.length){
 case 0:
 return state_machine__7468__auto____0.call(this);
 case 1:
-return state_machine__7468__auto____1.call(this,state_13238);
+return state_machine__7468__auto____1.call(this,state_17152);
 }
 throw(new Error('Invalid arity: ' + arguments.length));
 };
@@ -6091,8 +6091,8 @@ state_machine__7468__auto__.cljs$core$IFn$_invoke$arity$1 = state_machine__7468_
 return state_machine__7468__auto__;
 })()
 ;})(switch__7467__auto__,c__7537__auto__,t))
-})();var state__7539__auto__ = (function (){var statearr_13260 = f__7538__auto__.call(null);(statearr_13260[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__7537__auto__);
-return statearr_13260;
+})();var state__7539__auto__ = (function (){var statearr_17174 = f__7538__auto__.call(null);(statearr_17174[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__7537__auto__);
+return statearr_17174;
 })();return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null,state__7539__auto__);
 });})(c__7537__auto__,t))
 );
@@ -6103,7 +6103,7 @@ lt.plugins.autocompleter.core.pos_obj__GT_pos = (function pos_obj__GT_pos(p){ret
 lt.plugins.autocompleter.core.from_cm_hints = (function from_cm_hints(res_obj){if(cljs.core.truth_(res_obj))
 {var res = cljs.core.js__GT_clj.call(null,res_obj,new cljs.core.Keyword(null,"keywordize-keys","keywordize-keys",4191781672),true);var from = lt.plugins.autocompleter.core.pos_obj__GT_pos.call(null,new cljs.core.Keyword(null,"from","from",1017056028).cljs$core$IFn$_invoke$arity$1(res));var to = lt.plugins.autocompleter.core.pos_obj__GT_pos.call(null,new cljs.core.Keyword(null,"to","to",1013907949).cljs$core$IFn$_invoke$arity$1(res));var sym = lt.objs.editor.range.call(null,lt.objs.editor.pool.last_active.call(null),from,to);if(cljs.core.seq.call(null,sym.trim()))
 {return cljs.core.map.call(null,((function (res,from,to,sym){
-return (function (p1__13261_SHARP_){return cljs.core.PersistentHashMap.fromArrays.call(null,[new cljs.core.Keyword(null,"text","text",1017460895),new cljs.core.Keyword(null,"displayText","displayText",2728236161),new cljs.core.Keyword(null,"render","render",4374279432),new cljs.core.Keyword(null,"from","from",1017056028),new cljs.core.Keyword(null,"to","to",1013907949)],[p1__13261_SHARP_,p1__13261_SHARP_,((function (res,from,to,sym){
+return (function (p1__17175_SHARP_){return cljs.core.PersistentHashMap.fromArrays.call(null,[new cljs.core.Keyword(null,"text","text",1017460895),new cljs.core.Keyword(null,"displayText","displayText",2728236161),new cljs.core.Keyword(null,"render","render",4374279432),new cljs.core.Keyword(null,"from","from",1017056028),new cljs.core.Keyword(null,"to","to",1013907949)],[p1__17175_SHARP_,p1__17175_SHARP_,((function (res,from,to,sym){
 return (function (el,self,data){return lt.util.dom.html.call(null,el,wrapMatch(data.displayText,{"matched": sym}));
 });})(res,from,to,sym))
 ,from,to]);
@@ -6147,17 +6147,6 @@ lt.plugins.autocompleter.core.__BEH__anyword_hints = (function __BEH__anyword_hi
 }));
 });
 lt.object.behavior_STAR_.call(null,new cljs.core.Keyword("lt.plugins.autocompleter.core","anyword-hints","lt.plugins.autocompleter.core/anyword-hints",1169070757),new cljs.core.Keyword(null,"reaction","reaction",4441361819),lt.plugins.autocompleter.core.__BEH__anyword_hints,new cljs.core.Keyword(null,"desc","desc",1016984067),"Autocompleter: Anyword Hints",new cljs.core.Keyword(null,"triggers","triggers",2516997421),new cljs.core.PersistentHashSet(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"init-hints","init-hints",4468593473),null], null), null));
-lt.plugins.autocompleter.core.__BEH__show_hint_results = (function __BEH__show_hint_results(ed,hints){lt.plugins.autocompleter.core.maybe_close_hinter.call(null,ed);
-var temp__4092__auto__ = lt.plugins.autocompleter.core.process_hint_results.call(null,hints);if(cljs.core.truth_(temp__4092__auto__))
-{var processed_hints = temp__4092__auto__;return CodeMirror.showHint(lt.objs.editor.__GT_cm_ed.call(null,ed),((function (processed_hints,temp__4092__auto__){
-return (function (){return processed_hints;
-});})(processed_hints,temp__4092__auto__))
-,cljs.core.clj__GT_js.call(null,lt.plugins.autocompleter.core.default_options));
-} else
-{return null;
-}
-});
-lt.object.behavior_STAR_.call(null,new cljs.core.Keyword("lt.plugins.autocompleter.core","show-hint-results","lt.plugins.autocompleter.core/show-hint-results",3157800906),new cljs.core.Keyword(null,"reaction","reaction",4441361819),lt.plugins.autocompleter.core.__BEH__show_hint_results,new cljs.core.Keyword(null,"desc","desc",1016984067),"Autocompleter: Show the autocompleter popup with the given hints",new cljs.core.Keyword(null,"triggers","triggers",2516997421),new cljs.core.PersistentHashSet(null, new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"show-hint-results","show-hint-results",3654108914),null], null), null));
 lt.plugins.autocompleter.core.on_line_change = (function on_line_change(line,ch){var ed = lt.objs.editor.pool.last_active.call(null);if(cljs.core.not.call(null,lt.plugins.autocompleter.core.completion_active_QMARK_.call(null,ed)))
 {return CodeMirror.off(line,"change",on_line_change);
 } else
@@ -6168,9 +6157,92 @@ lt.plugins.autocompleter.core.on_line_change = (function on_line_change(line,ch)
 }
 }
 });
+/**
+* Creates a channel for writing results that are to be popped up with the hinter ui
+* Displays hint results async by calling the showHint plugin callback when
+* results are received on the channel
+*/
+lt.plugins.autocompleter.core.init_show_hint_ch = (function init_show_hint_ch(ed){var ch = cljs.core.async.chan.call(null);CodeMirror.showHint(lt.objs.editor.__GT_cm_ed.call(null,ed),((function (ch){
+return (function (_,cb){var c__7537__auto__ = cljs.core.async.chan.call(null,1);cljs.core.async.impl.dispatch.run.call(null,((function (c__7537__auto__,ch){
+return (function (){var f__7538__auto__ = (function (){var switch__7467__auto__ = ((function (c__7537__auto__,ch){
+return (function (state_17195){var state_val_17196 = (state_17195[1]);if((state_val_17196 === 2))
+{var inst_17191 = (state_17195[2]);var inst_17192 = lt.plugins.autocompleter.core.process_hint_results.call(null,inst_17191);var inst_17193 = cb.call(null,inst_17192);var state_17195__$1 = state_17195;return cljs.core.async.impl.ioc_helpers.return_chan.call(null,state_17195__$1,inst_17193);
+} else
+{if((state_val_17196 === 1))
+{var state_17195__$1 = state_17195;return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null,state_17195__$1,2,ch);
+} else
+{return null;
+}
+}
+});})(c__7537__auto__,ch))
+;return ((function (switch__7467__auto__,c__7537__auto__,ch){
+return (function() {
+var state_machine__7468__auto__ = null;
+var state_machine__7468__auto____0 = (function (){var statearr_17200 = [null,null,null,null,null,null,null];(statearr_17200[0] = state_machine__7468__auto__);
+(statearr_17200[1] = 1);
+return statearr_17200;
+});
+var state_machine__7468__auto____1 = (function (state_17195){while(true){
+var ret_value__7469__auto__ = (function (){try{while(true){
+var result__7470__auto__ = switch__7467__auto__.call(null,state_17195);if(cljs.core.keyword_identical_QMARK_.call(null,result__7470__auto__,new cljs.core.Keyword(null,"recur","recur",1122293407)))
+{{
+continue;
+}
+} else
+{return result__7470__auto__;
+}
+break;
+}
+}catch (e17201){if((e17201 instanceof Object))
+{var ex__7471__auto__ = e17201;var statearr_17202_17216 = state_17195;(statearr_17202_17216[5] = ex__7471__auto__);
+cljs.core.async.impl.ioc_helpers.process_exception.call(null,state_17195);
+return new cljs.core.Keyword(null,"recur","recur",1122293407);
+} else
+{if(new cljs.core.Keyword(null,"else","else",1017020587))
+{throw e17201;
+} else
+{return null;
+}
+}
+}})();if(cljs.core.keyword_identical_QMARK_.call(null,ret_value__7469__auto__,new cljs.core.Keyword(null,"recur","recur",1122293407)))
+{{
+var G__17217 = state_17195;
+state_17195 = G__17217;
+continue;
+}
+} else
+{return ret_value__7469__auto__;
+}
+break;
+}
+});
+state_machine__7468__auto__ = function(state_17195){
+switch(arguments.length){
+case 0:
+return state_machine__7468__auto____0.call(this);
+case 1:
+return state_machine__7468__auto____1.call(this,state_17195);
+}
+throw(new Error('Invalid arity: ' + arguments.length));
+};
+state_machine__7468__auto__.cljs$core$IFn$_invoke$arity$0 = state_machine__7468__auto____0;
+state_machine__7468__auto__.cljs$core$IFn$_invoke$arity$1 = state_machine__7468__auto____1;
+return state_machine__7468__auto__;
+})()
+;})(switch__7467__auto__,c__7537__auto__,ch))
+})();var state__7539__auto__ = (function (){var statearr_17203 = f__7538__auto__.call(null);(statearr_17203[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__7537__auto__);
+return statearr_17203;
+})();return cljs.core.async.impl.ioc_helpers.run_state_machine_wrapped.call(null,state__7539__auto__);
+});})(c__7537__auto__,ch))
+);
+return c__7537__auto__;
+});})(ch))
+,cljs.core.clj__GT_js.call(null,lt.plugins.autocompleter.core.default_options));
+return ch;
+});
 lt.plugins.autocompleter.core.__BEH__start_hinting = (function __BEH__start_hinting(ed){var pos = lt.objs.editor.__GT_cursor.call(null,ed);var line_handle = lt.objs.editor.line_handle.call(null,ed,new cljs.core.Keyword(null,"line","line",1017226086).cljs$core$IFn$_invoke$arity$1(pos));var chs = lt.object.raise_reduce.call(null,ed,new cljs.core.Keyword(null,"init-hints","init-hints",4468593473),cljs.core.PersistentVector.EMPTY);CodeMirror.off(line_handle,"change",lt.plugins.autocompleter.core.on_line_change);
 if(cljs.core.seq.call(null,chs))
-{lt.plugins.autocompleter.core.listen_for_hint_results.call(null,ed,chs);
+{lt.plugins.autocompleter.core.listen_for_hint_results.call(null,ed,chs,lt.plugins.autocompleter.core.init_show_hint_ch.call(null,ed));
 return CodeMirror.on(line_handle,"change",lt.plugins.autocompleter.core.on_line_change);
 } else
 {return lt.plugins.autocompleter.core.maybe_close_hinter.call(null,ed);
