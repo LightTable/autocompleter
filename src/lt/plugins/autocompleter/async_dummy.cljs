@@ -35,17 +35,6 @@
                       [:async-dummy-channels]
                       (dissoc chs ch-id ))))
 
-;; (let [ed (pool/last-active)]
-;;   ;(object/assoc-in! ed [:async-dummy-channels] nil)
-;;   (println (:async-dummy-channels @ed)))
-
-
-
-;; (let [ed (atom {})
-;;       ch (chan)]
-;;   (let [ch-id (store-ch ed ch)]
-;;     (.log js/console (get-ch ed ch-id))))
-
 
 
 (def background-worker
@@ -53,7 +42,7 @@
     (fn [obj-id token ch-id]
       (js/setTimeout
         (fn []
-          (let [all-hints ["map" "map-indexed" "map-reduce" "max" "min"]
+          (let [all-hints ["map" "map-indexed" "map-reduce" "max" "min" "juxt" "java" "just"]
                 starts-with #(= 0 (.indexOf %1 %2))
                 sym (:string token)]
             (js/_send obj-id
@@ -63,9 +52,8 @@
                                 :list (filter #(starts-with % sym) all-hints)
                                 :from {:ch (:start token) :line (:line token)}
                                 :to {:ch (:end token) :line (:line token)}}))))
-        (+ 200 (rand-int 1)) ;; This provokes an interesting edge case where results may come out of order (try larger rand to see)!
+        (+ 100 (rand-int 10)) ;; This provokes an interesting edge case where results may come out of order (try larger rand to see)!
         ))))
-
 
 
 
@@ -73,26 +61,48 @@
 (defn- ->hints [ed res-obj]
   (let [{:keys [sym from to] :as res} (js->clj res-obj :keywordize-keys true)
         token (ac/get-token ed)]
+    (map #(hash-map :text %
+                    :displayText %
+                    :render (fn [el self data]
+                              (dom/html el (js/wrapMatch (.-displayText data) #js {:matched sym})))
+                    :from from
+                    :to to)
+         (:list res))))
 
-    (if (< (- (:end token) (:ch to)) 2)
-      (map #(hash-map :text %
-                     :displayText %
-                     :render (fn [el self data]
-                               (dom/html el (js/wrapMatch (.-displayText data) #js {:matched sym})))
-                     :from from
-                     :to to)
-          (:list res))
-      [])))
+
 
 
 (behavior ::async-hint-results
           :triggers #{:async-hint-results}
           :desc "Async dummy: Hint results"
           :reaction (fn [ed res]
-                      (when-let [ch (get-ch ed (.-chid res))]
-                        (put! ch (->hints ed res))
-                        (remove-ch ed (.-chid res)) ;; TODO: if there are no results, no cleanup happens !
-                        )))
+                      (let [hints (->hints ed res)]
+                        (when-let [ch (get-ch ed (.-chid res))]
+                          (object/assoc-in! ed [:async-dummy-cached-hints] hints)
+                          (object/assoc-in! ed
+                                            [:async-dummy-cached-token]
+                                            {:start (.-ch (.-from res))
+                                             :end (.-ch (.-to res))
+                                             :line (.-line (.-from res))
+                                             :string (.-sym res)})
+                          (put! ch hints)
+                          (remove-ch ed (.-chid res)) ;; TODO: if there are no results, no cleanup happens !
+                          ))))
+
+
+
+(defn- maybe-cached-hints [token cached-token cached-hints]
+  (let [starts-with #(and %1 %2 (= 0 (.indexOf %1 %2)))]
+    (when (and cached-token
+               (seq (:string cached-token))
+               (seq cached-hints)
+               (and (= (:line token) (:line cached-token)))
+               (and (= (:start token) (:start cached-token)))
+               (starts-with (:string token) (:string cached-token)))
+      (->> (filter #(starts-with (:text %) (:string token)) cached-hints)
+           (map #(assoc-in % [:to :ch] (:end token)))))))
+
+
 
 
 (behavior ::async-hints
@@ -101,9 +111,14 @@
           :reaction (fn [ed channels]
                       (let [pos (editor/->cursor ed)
                             token (assoc (ac/get-token ed) :line (:line pos))
+                            cached-token (-> @ed :async-dummy-cached-token)
+                            cached-hints (-> @ed :async-dummy-cached-hints)
                             ch (chan)]
+
                         (if (ac/should-hint? ed)
-                          (let [ch-id (store-ch ed ch)]
-                            (background-worker ed token ch-id (ac/curr-time))
+                          (do
+                            (if-let [hints (maybe-cached-hints token cached-token cached-hints)]
+                              (put! ch hints)
+                              (background-worker ed token (store-ch ed ch)))
                             (conj channels ch))
                           channels))))
