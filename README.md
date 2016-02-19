@@ -8,13 +8,39 @@ might replace the existing autocomplete functionality in Light Table**
 * Support as much as possible of the current features
 * Start using the CodeMirror [showHints](http://codemirror.net/addon/hint/show-hint.js) addon. This allows us to use the existing hints feature for javascript, *anywords*, css, html and xml
 * Make it much more approachable for plugin authors to plug into the autocompleter, especially for async hints
-* Increase maintainability for the Core team
+* Improve maintainability for the Core team
 * Make it easier to contribute
 
 
 
 ### Current status
-It's merely a proof of concept so far. A simple implementation for handling a combination of the javascript and anyword hinter addons from CodeMirror.
+It's merely a proof of concept so far. A simple implementation for handling a combination of the javascript and anyword hinter addons from CodeMirror. There is also a sample implementation for an async hint provider.
+
+
+#### Pending issues
+- **Flickering**: Using the async option for CM showHints cause flickering of the hint popup when typing (not using the async option causes timing conflicts when selecting items after typing moderately fast when using an async provider)
+- **Keymap**: Custom keymap not implemented. Not 100% clear what would be the best implementation route
+- **Multiple providers might differ on what constitutes a token**
+    - **Popup placement**: the showHints plugin requires from-to attributes for the complete hint result. Used for postioning hints. Currently from/to for the result just uses the first item in the aggregate result. This causes unpredictable placement of the hint popup
+    - **Surprising results**: The result list might become quite surprising to a user with different providers. This quickly becomes evident when using the anywords provider in combination with any other provider.
+- **Sorting**: How to negotiate sorting when there are multiple providers ? Currently hardcoded to alphanumeric sort for the complete result.
+
+
+#### Caching
+It's tempting to add caching to the core of the autocompleter. However the drawback to this is that
+this quickly makes it much harder for someone implementing an async provider to reason about the end result.
+The current implementation in LT uses a fuzzy matcher to filter cached results. This is a cause for much confusion for plugin authors. Caching in core also forces a standardized token interpretation and token change detection behavior. This is problematic when using multiple providers. All things considered, it seems that it would be best to let each plugin provider worry about caching (and token change/cache invalidation). Core might expose some helper methods to make it easier for plugin providers to introduce caching though. Typically caching must be considered when results can't be provided within 50ms (ballpark figure) it seems.
+However even with 50ms responses for hint results, the flickering issue mentioned above becomes quite bothersome.
+
+
+#### Performance tuning
+No attempts have been made to tune performance.
+
+#### Default timeout
+The default timeout for aggregated hint results should be a short as possible. The longer it is, the greater the chance that one "bad" provider might substantially mess up the autocompleter experience for a user.
+
+
+
 
 #### Sync vs Async
 In an attempt to simplify handling the combination of sync and async hints, all hint providers must act as they are async. A hint provider should return a core-async channel. If the provider is able to provide hints very fast, just put them on the channel immediatly but take care not to block the main thread of LT ! For async handling it's up to the provider to keep track of their  channel, so they can put results to it as and when these are available.
@@ -87,11 +113,9 @@ that providers are registered, so you shouldn't rely upon what's present in the 
                             ;; a core-async channel
                             ch (chan)]
                         (if (ac/should-hint? ed) ;; check that the token is worth hinting
-                          (do
-                            ;; Store the channel
-                            (object/assoc-in! ed [:async-dummy-channel] ch)
+                          (let [ch-id (store-channel ed ch)] ;; Store the channel
                             ;; send off the work to find applicable hints to some async worker
-                            (background-worker ed token)
+                            (background-worker ed token ch-id)
                             ;; add your channel so that it is listened too by the framework
                             (conj channels ch))
                           ;; if n/a for you,
@@ -103,7 +127,7 @@ that providers are registered, so you shouldn't rely upon what's present in the 
           :triggers #{:async-hint-results}
           :desc "Async dummy: Hint results"
           :reaction (fn [ed res]
-                      (when-let [ch (:async-dummy-channel @ed)]
+                      (when-let [ch (get-channel ed (.-chId res)] ;; get the stored channel
                         ;; here we put the results on the channel we stored above
                         ;; Note: we put regardless of empty results
                         (put! ch (->hints res)))))
